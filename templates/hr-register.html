@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumeAI - Professional Registration</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="auth-layout fade-in">
+    <!-- Animated Background Blobs -->
+    <div class="blob" style="width: 400px; height: 400px; background: #6366F1; top: -100px; left: -100px; --duration: 20s;"></div>
+    <div class="blob" style="width: 300px; height: 300px; background: #EC4899; bottom: 10%; left: 30%; --duration: 22s;"></div>
+
+    <section class="auth-left fade-in">
+        <!-- Animated Background Blobs -->
+        <div class="blob" style="width: 500px; height: 500px; background: var(--accent-blue); top: -200px; left: -200px; --duration: 28s;"></div>
+        <div class="blob" style="width: 350px; height: 350px; background: #EC4899; bottom: 10%; left: 30%; --duration: 22s;"></div>
+
+        <div style="z-index: 10; position: relative;">
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 48px;">
+                <div class="logo-icon" style="width: 56px; height: 56px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                <h1 style="font-size: 42px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.04em;">ResumeAI</h1>
+            </div>
+            
+            <h2 class="slide-up" style="font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 24px; letter-spacing: -0.03em;">
+                Start screening <br>
+                <span style="background: var(--gradient-main); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">better</span> today.
+            </h2>
+            <p class="slide-up" style="font-size: 18px; color: var(--text-secondary); font-weight: 400; max-width: 440px; margin-bottom: 48px; line-height: 1.6;">
+                Join thousands of HR professionals using AI to streamline their recruitment funnel and find the best talent.
+            </p>
+
+            <div class="slide-up" style="display: flex; gap: 32px;">
+                <div>
+                    <h4 style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">10x</h4>
+                    <p style="font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Faster Screening</p>
+                </div>
+                <div style="width: 1px; height: 40px; background: var(--border-subtle);"></div>
+                <div>
+                    <h4 style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">99%</h4>
+                    <p style="font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">AI Accuracy</p>
+                </div>
+                <div style="width: 1px; height: 40px; background: var(--border-subtle);"></div>
+                <div>
+                    <h4 style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">2k+</h4>
+                    <p style="font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Active Companies</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="auth-right">
+        <div class="glass-card slide-up" style="padding: 56px; width: 100%; max-width: 480px;">
+            <div style="margin-bottom: 32px;">
+                <h2 style="font-size: 32px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px;">Create Account</h2>
+                <p style="font-size: 14px; color: var(--text-secondary);">Get started with your company dashboard.</p>
+            </div>
+
+            <form id="register-form">
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Full Name</label>
+                    <input type="text" name="name" class="form-input" placeholder="John Doe" required>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Work Email</label>
+                    <input type="email" name="email" class="form-input" placeholder="john@company.com" required>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Password</label>
+                    <input type="password" name="password" class="form-input" placeholder="Min 6 characters" required>
+                </div>
+                <div style="margin-bottom: 32px;">
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Confirm Password</label>
+                    <input type="password" name="confirm_password" class="form-input" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 32px;">Complete Registration</button>
+                
+                <p style="text-align: center; font-size: 14px; color: var(--text-secondary);">
+                    Already have an account? <a href="/hr/login" style="color: var(--text-primary); font-weight: 700; text-decoration: underline; text-underline-offset: 4px;">Sign in here</a>
+                </p>
+            </form>
+        </div>
+    </section>
+
+    <script src="/static/app.js" defer></script>
+</body>
+</html>

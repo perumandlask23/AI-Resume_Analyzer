@@ -1,0 +1,45 @@
+services:
+  # ── Application ─────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: resumeai-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+      - PORT=8000
+      - MONGODB_URI=mongodb://mongo:27017/resume_screener
+      - SECRET_KEY=${SECRET_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - resumeai-net
+
+  # ── MongoDB ──────────────────────────────────────────────────
+  mongo:
+    image: mongo:7-jammy
+    container_name: resumeai-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - resumeai-net
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks:
+  resumeai-net:
+    driver: bridge
