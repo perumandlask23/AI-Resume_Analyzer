@@ -9,7 +9,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 async function analyzeResume(resumeText, jobDescription) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   const prompt = `
 You are an expert HR recruiter and resume analyst. Analyze the following resume against the given job description and provide a detailed, accurate assessment.
