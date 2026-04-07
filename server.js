@@ -173,36 +173,44 @@ app.get('/apply-success', (req, res) => {
 });
 
 // --- AUTH API ROUTES ---
-app.post('/api/hr/register', async (req, res) => {
-  const { name, email, password, confirm_password } = req.body;
-  if (password !== confirm_password) return res.status(400).json({ error: 'Passwords do not match' });
-  
-  const existingUser = await User.findOne({ email });
-  if (existingUser) return res.status(400).json({ error: 'Email already registered' });
-  
-  if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+app.post('/api/hr/register', async (req, res, next) => {
+  try {
+    const { name, email, password, confirm_password } = req.body;
+    if (password !== confirm_password) return res.status(400).json({ error: 'Passwords do not match' });
+    
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ error: 'Email already registered' });
+    
+    if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
 
-  const newUser = new User({ 
-    name, 
-    email, 
-    hashedPassword: hashPassword(password) 
-  });
-  await newUser.save();
+    const newUser = new User({ 
+      name, 
+      email, 
+      hashedPassword: hashPassword(password) 
+    });
+    await newUser.save();
 
-  const token = createToken(email);
-  res.cookie('access_token', token, { maxAge: 30 * 24 * 3600000, httpOnly: true, sameSite: 'lax' });
-  res.json({ success: true, redirect: '/hr/dashboard' });
+    const token = createToken(email);
+    res.cookie('access_token', token, { maxAge: 30 * 24 * 3600000, httpOnly: true, sameSite: 'lax' });
+    res.json({ success: true, redirect: '/hr/dashboard' });
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.post('/api/hr/login', async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user || !verifyPassword(password, user.hashedPassword)) {
-    return res.status(401).json({ error: 'Invalid email or password' });
+app.post('/api/hr/login', async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user || !verifyPassword(password, user.hashedPassword)) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+    const token = createToken(email);
+    res.cookie('access_token', token, { maxAge: 30 * 24 * 3600000, httpOnly: true, sameSite: 'lax' });
+    res.json({ success: true, redirect: '/hr/dashboard' });
+  } catch (err) {
+    next(err);
   }
-  const token = createToken(email);
-  res.cookie('access_token', token, { maxAge: 30 * 24 * 3600000, httpOnly: true, sameSite: 'lax' });
-  res.json({ success: true, redirect: '/hr/dashboard' });
 });
 
 app.post('/api/hr/logout', (req, res) => {
@@ -215,27 +223,35 @@ app.get('/api/hr/me', requireAuth, (req, res) => {
 });
 
 // --- JOB POSTING API ROUTES ---
-app.post('/api/jobs', requireAuth, async (req, res) => {
-  const { title, description } = req.body;
-  if (!title || !description) return res.status(400).json({ error: 'Title and description required' });
-  
-  const newJob = new Job({ 
-    title, 
-    description, 
-    createdBy: req.user.email 
-  });
-  await newJob.save();
-  
-  res.json({ success: true, jobId: newJob._id, applyUrl: '/apply/' + newJob._id });
+app.post('/api/jobs', requireAuth, async (req, res, next) => {
+  try {
+    const { title, description } = req.body;
+    if (!title || !description) return res.status(400).json({ error: 'Title and description required' });
+    
+    const newJob = new Job({ 
+      title, 
+      description, 
+      createdBy: req.user.email 
+    });
+    await newJob.save();
+    
+    res.json({ success: true, jobId: newJob._id, applyUrl: '/apply/' + newJob._id });
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.get('/api/jobs', requireAuth, async (req, res) => {
-  const jobs = await Job.find({ createdBy: req.user.email }).sort({ createdAt: -1 });
-  const jobsWithCount = await Promise.all(jobs.map(async (j) => {
-    const count = await Applicant.countDocuments({ jobId: j._id });
-    return { ...j.toObject(), applicantCount: count, id: j._id };
-  }));
-  res.json(jobsWithCount);
+app.get('/api/jobs', requireAuth, async (req, res, next) => {
+  try {
+    const jobs = await Job.find({ createdBy: req.user.email }).sort({ createdAt: -1 });
+    const jobsWithCount = await Promise.all(jobs.map(async (j) => {
+      const count = await Applicant.countDocuments({ jobId: j._id });
+      return { ...j.toObject(), applicantCount: count, id: j._id };
+    }));
+    res.json(jobsWithCount);
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.get('/api/jobs/:jobId', requireAuth, async (req, res) => {
@@ -249,22 +265,30 @@ app.get('/api/jobs/:jobId', requireAuth, async (req, res) => {
   }
 });
 
-app.patch('/api/jobs/:jobId', requireAuth, async (req, res) => {
-  const { title, description } = req.body;
-  const job = await Job.findOneAndUpdate(
-    { _id: req.params.jobId, createdBy: req.user.email },
-    { title, description },
-    { new: true }
-  );
-  if (!job) return res.status(404).json({ error: 'Job not found' });
-  res.json({ success: true, job });
+app.patch('/api/jobs/:jobId', requireAuth, async (req, res, next) => {
+  try {
+    const { title, description } = req.body;
+    const job = await Job.findOneAndUpdate(
+      { _id: req.params.jobId, createdBy: req.user.email },
+      { title, description },
+      { new: true }
+    );
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    res.json({ success: true, job });
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.delete('/api/jobs/:jobId', requireAuth, async (req, res) => {
-  const job = await Job.findOneAndDelete({ _id: req.params.jobId, createdBy: req.user.email });
-  if (!job) return res.status(404).json({ error: 'Job not found' });
-  await Applicant.deleteMany({ jobId: req.params.jobId });
-  res.json({ success: true });
+app.delete('/api/jobs/:jobId', requireAuth, async (req, res, next) => {
+  try {
+    const job = await Job.findOneAndDelete({ _id: req.params.jobId, createdBy: req.user.email });
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    await Applicant.deleteMany({ jobId: req.params.jobId });
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // --- APPLICATION API ROUTES (PUBLIC) ---

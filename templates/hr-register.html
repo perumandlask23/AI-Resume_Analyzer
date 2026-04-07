@@ -61,22 +61,26 @@
                 <p style="font-size: 14px; color: var(--text-secondary);">Get started with your company dashboard.</p>
             </div>
 
-            <form id="register-form">
+            <form id="register-form" autocomplete="off">
+                <!-- Honeypot -->
+                <input type="text" style="display:none;" aria-hidden="true" tabindex="-1">
+                <input type="password" style="display:none;" aria-hidden="true" tabindex="-1">
+
                 <div style="margin-bottom: 16px;">
                     <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Full Name</label>
-                    <input type="text" name="name" class="form-input" placeholder="John Doe" required>
+                    <input type="text" name="name" id="reg-name" class="form-input" placeholder="John Doe" autocomplete="new-password" required>
                 </div>
                 <div style="margin-bottom: 16px;">
                     <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Work Email</label>
-                    <input type="email" name="email" class="form-input" placeholder="john@company.com" required>
+                    <input type="email" name="email" id="reg-email" class="form-input" placeholder="john@company.com" autocomplete="new-password" required>
                 </div>
                 <div style="margin-bottom: 16px;">
                     <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Password</label>
-                    <input type="password" name="password" class="form-input" placeholder="Min 6 characters" required>
+                    <input type="password" name="password" id="reg-password" class="form-input" placeholder="Min 6 characters" autocomplete="new-password" required>
                 </div>
                 <div style="margin-bottom: 32px;">
                     <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Confirm Password</label>
-                    <input type="password" name="confirm_password" class="form-input" placeholder="••••••••" required>
+                    <input type="password" name="confirm_password" id="reg-confirm" class="form-input" placeholder="••••••••" autocomplete="new-password" required>
                 </div>
                 
                 <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 32px;">Complete Registration</button>
@@ -89,5 +93,20 @@
     </section>
 
     <script src="/static/app.js" defer></script>
+    <script>
+        // Force-clear fields to prevent aggressive browser autofill
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.querySelectorAll('.form-input').forEach(el => {
+                    if (el.value) el.value = '';
+                });
+            }, 50);
+            setTimeout(() => {
+                document.querySelectorAll('.form-input').forEach(el => {
+                    if (el.value) el.value = '';
+                });
+            }, 500); // Failsafe for slower autofill injections
+        });
+    </script>
 </body>
 </html>

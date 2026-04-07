@@ -71,7 +71,16 @@ async function apiCall(url, options = {}) {
             headers: { 'Content-Type': 'application/json', ...options.headers },
             ...options
         });
-        const data = await res.json();
+        
+        let data;
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            data = await res.json();
+        } else {
+            const text = await res.text();
+            data = { error: `Server error (${res.status}): ${text.substring(0, 50)}...` };
+        }
+        
         if (!res.ok) throw new Error(data.error || 'Request failed');
         return data;
     } catch (err) {
