@@ -80,8 +80,23 @@ function generateRefNumber() {
 }
 
 // --- PAGE ROUTES ---
-app.get('/', (req, res) => res.redirect('/hr/dashboard'));
-app.get('/health', (req, res) => res.send("Server is running 🚀"));
+app.get('/', (req, res) => {
+  // Render health check expects 200 OK on '/', but we want to send users to /hr/dashboard
+  res.status(200).send(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta http-equiv="refresh" content="0; url=/hr/dashboard" />
+        <title>Loading ResumeAI...</title>
+      </head>
+      <body style="background: #0f172a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif;">
+        <script>window.location.replace('/hr/dashboard');</script>
+        <p>Server is running 🚀. Redirecting to application... <a href="/hr/dashboard" style="color: #6366F1;">Click here if not redirected</a>.</p>
+      </body>
+    </html>
+  `);
+});
+app.get('/health', (req, res) => res.status(200).send("Server is running 🚀"));
 
 app.get('/hr/login', async (req, res) => {
   // Redirect already-logged-in users to prevent credential reuse from autofill
