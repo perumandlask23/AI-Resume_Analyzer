@@ -17,10 +17,11 @@ const Job = require('./models/Job');
 const Applicant = require('./models/Applicant');
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 10000;
 
 // --- DATABASE CONNECTION ---
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.set('strictQuery', false); // Added to fix common Mongoose deprecation warning
+mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
@@ -79,7 +80,7 @@ function generateRefNumber() {
 }
 
 // --- PAGE ROUTES ---
-app.get('/', (req, res) => res.redirect('/hr/login'));
+app.get('/', (req, res) => res.send("Server is running 🚀"));
 
 app.get('/hr/login', async (req, res) => {
   // Redirect already-logged-in users to prevent credential reuse from autofill
@@ -412,6 +413,10 @@ app.use((err, req, res, next) => {
 });
 
 // --- SERVER START ---
-app.listen(PORT, () => {
-  console.log(`✅ ResumeAI Screener running at http://localhost:${PORT}`);
+console.log("🚀 Server starting...");
+process.on("uncaughtException", err => console.error("Uncaught Exception:", err));
+process.on("unhandledRejection", err => console.error("Unhandled Rejection:", err));
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ ResumeAI Screener running at http://0.0.0.0:${PORT}`);
 });
