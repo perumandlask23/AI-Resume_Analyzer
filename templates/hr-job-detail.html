@@ -188,9 +188,26 @@
         const JOB_ID = "{{jobId}}";
         const SHARE_URL = window.location.origin + "/apply/" + JOB_ID;
         
-        function copyShareLink() {
-            navigator.clipboard.writeText(SHARE_URL);
-            showToast('Application link copied!', 'success');
+        async function copyShareLink() {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(SHARE_URL);
+                } else {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = SHARE_URL;
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-999999px";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    document.execCommand('copy');
+                    textArea.remove();
+                }
+                showToast('Application link copied!', 'success');
+            } catch (err) {
+                console.error('Copy failed:', err);
+                alert('Could not copy link. Share URL: ' + SHARE_URL);
+            }
         }
 
         // Init description toggle
