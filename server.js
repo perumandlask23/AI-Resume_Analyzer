@@ -80,7 +80,8 @@ function generateRefNumber() {
 }
 
 // --- PAGE ROUTES ---
-app.get('/', (req, res) => res.send("Server is running 🚀"));
+app.get('/', (req, res) => res.redirect('/hr/dashboard'));
+app.get('/health', (req, res) => res.send("Server is running 🚀"));
 
 app.get('/hr/login', async (req, res) => {
   // Redirect already-logged-in users to prevent credential reuse from autofill
