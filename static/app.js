@@ -175,6 +175,13 @@ async function initDashboard() {
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/static/sw.js')
+            .then(() => console.log('ResumeAI Service Worker Registered'))
+            .catch(err => console.error('SW Registration Failed:', err));
+    }
+
     const path = window.location.pathname;
     if (path === '/hr/login') initAuth('login-form', '/api/hr/login');
     if (path === '/hr/register') initAuth('register-form', '/api/hr/register');
