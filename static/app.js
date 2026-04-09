@@ -132,14 +132,20 @@ async function initDashboard() {
         }
         
         jobs.forEach((job, index) => {
+            const isClosed = job.status === 'closed';
             const card = document.createElement('div');
-            card.className = 'glass-card slide-up';
+            card.className = `glass-card slide-up ${isClosed ? 'job-closed' : ''}`;
             card.style.padding = '32px';
             card.style.animationDelay = `${index * 0.1}s`;
+            if (isClosed) card.style.opacity = '0.6';
+            
             card.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px;">
                     <div style="overflow: hidden;">
-                        <h3 style="font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 8px;">${job.title}</h3>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <h3 style="font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--text-primary); margin: 0;">${job.title}</h3>
+                            ${isClosed ? '<span class="badge badge-red" style="font-size: 8px; padding: 2px 6px;">CLOSED</span>' : ''}
+                        </div>
                         <div style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                             Posted ${new Date(job.createdAt).toLocaleDateString()}
@@ -149,27 +155,35 @@ async function initDashboard() {
                 </div>
                 
                 <div style="display: flex; gap: 12px; margin-top: auto;">
-                    <a href="/hr/jobs/${job.id}" class="btn btn-primary" style="flex: 2; height: 44px; font-size: 13px; font-weight: 700; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
+                    <a href="/hr/jobs/${job.id}" class="btn btn-primary" style="flex: 1.5; min-width: 140px; height: 48px; font-size: 13px; font-weight: 700; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
                         <span style="display: flex; align-items: center; gap: 8px;">
                             View Applicants
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </span>
                         <span style="font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.7); margin-top: 2px;">Check who applied</span>
                     </a>
-                    <button class="btn btn-ghost delete-job" data-id="${job.id}" style="flex: 1; height: 44px; font-size: 13px; font-weight: 600; color: var(--accent-red-lt); display: flex; flex-direction: column; line-height: 1.2;">
-                        Close Job
-                        <span style="font-size: 9px; opacity: 0.6;">Hide posting</span>
+                    <button class="btn btn-ghost toggle-job-status" data-id="${job.id}" data-status="${job.status}" style="flex: 1; min-width: 100px; height: 48px; font-size: 13px; font-weight: 600; color: ${isClosed ? 'var(--accent-green-lt)' : 'var(--accent-red-lt)'}; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
+                        ${isClosed ? 'Reopen Job' : 'Close Job'}
+                        <span style="font-size: 9px; opacity: 0.6;">${isClosed ? 'Active link' : 'Hide posting'}</span>
                     </button>
                 </div>
             `;
             jobList.appendChild(card);
         });
         
-        // Delete listeners
-        document.querySelectorAll('.delete-job').forEach(btn => {
+        // Status toggle listeners
+        document.querySelectorAll('.toggle-job-status').forEach(btn => {
             btn.onclick = async () => {
-                if (confirm('Delete this job?')) {
-                    await apiCall(`/api/jobs/${btn.dataset.id}`, { method: 'DELETE' });
+                const currentStatus = btn.dataset.status;
+                const newStatus = currentStatus === 'open' ? 'closed' : 'open';
+                const action = newStatus === 'closed' ? 'close' : 'reopen';
+                
+                if (confirm(`Are you sure you want to ${action} this job?`)) {
+                    await apiCall(`/api/jobs/${btn.dataset.id}/status`, { 
+                        method: 'PATCH',
+                        body: JSON.stringify({ status: newStatus })
+                    });
+                    showToast(`Job ${newStatus === 'open' ? 'reopened' : 'closed'} successfully!`);
                     initDashboard();
                 }
             };

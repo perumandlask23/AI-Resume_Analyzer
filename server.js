@@ -113,9 +113,10 @@ app.get('/hr/register', async (req, res) => {
 app.get('/hr/dashboard', requireAuth, async (req, res) => {
   try {
     const jobs = await Job.find({ createdBy: req.user.email });
+    const openJobs = jobs.filter(j => j.status === 'open');
     const jobIds = jobs.map(j => j._id);
 
-    const totalJobs = jobs.length;
+    const totalJobs = openJobs.length;
     const totalApplicants = await Applicant.countDocuments({ jobId: { $in: jobIds } });
     const analyzedCount = await Applicant.countDocuments({ jobId: { $in: jobIds }, analysis: { $ne: null } });
     const shortlistedCount = await Applicant.countDocuments({ jobId: { $in: jobIds }, status: 'shortlisted' });
@@ -174,7 +175,7 @@ app.get('/hr/jobs/:jobId', requireAuth, async (req, res) => {
 app.get('/apply/:jobId', async (req, res) => {
   try {
     const job = await Job.findById(req.params.jobId);
-    if (!job) return res.send('Job not found or no longer accepting applications.');
+    if (!job || job.status === 'closed') return res.send('<div style="background:#09090B; color:white; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif;"><h1>Position Closed</h1><p style="color:#A1A1AA;">This role is no longer accepting applications.</p><a href="/" style="color:#6366F1; margin-top:20px;">Return Home</a></div>');
     res.send(renderTemplate('apply.html', { 
       jobId: job._id, 
       jobTitle: job.title, 
@@ -303,6 +304,23 @@ app.delete('/api/jobs/:jobId', requireAuth, async (req, res, next) => {
     if (!job) return res.status(404).json({ error: 'Job not found' });
     await Applicant.deleteMany({ jobId: req.params.jobId });
     res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.patch('/api/jobs/:jobId/status', requireAuth, async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    if (!['open', 'closed'].includes(status)) return res.status(400).json({ error: 'Invalid status' });
+    
+    const job = await Job.findOneAndUpdate(
+      { _id: req.params.jobId, createdBy: req.user.email },
+      { status },
+      { new: true }
+    );
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    res.json({ success: true, status: job.status });
   } catch (err) {
     next(err);
   }
