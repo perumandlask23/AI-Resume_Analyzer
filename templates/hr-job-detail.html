@@ -257,7 +257,7 @@
                     </td>
                     <td style="color: var(--text-secondary); font-size: 13px;">${new Date(app.submittedAt).toLocaleDateString()}</td>
                     <td>
-                        ${score !== null ? `<div class="badge ${score >= 70 ? 'badge-green' : score >= 40 ? 'badge-amber' : 'badge-red'}" style="width: 60px; justify-content: center;">${score}%</div>` : '<p style="color: var(--text-muted); font-size: 13px;">Pending</p>'}
+                        ${(score !== null && score !== undefined) ? `<div class="badge ${score >= 70 ? 'badge-green' : score >= 40 ? 'badge-amber' : 'badge-red'}" style="width: 60px; justify-content: center;">${score}%</div>` : '<p style="color: var(--text-muted); font-size: 13px;">Pending</p>'}
                     </td>
                     <td>
                         ${analysis ? `<span style="font-size: 13px; font-weight: 600; color: ${score >= 70 ? 'var(--accent-green)' : 'var(--text-secondary)'}">${fit}</span>` : '<span class="shimmer" style="font-size: 12px; color: var(--text-muted);">Analyzing...</span>'}

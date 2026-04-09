@@ -371,7 +371,7 @@ app.post('/api/jobs/:jobId/applicants/:appId/analyze', requireAuth, async (req, 
     res.json({ appId, analysis, status: applicant.status });
   } catch (error) {
     console.error('Analysis error:', error);
-    res.status(500).json({ error: 'Failed to analyze resume' });
+    res.status(500).json({ error: error.message || 'Failed to analyze resume' });
   }
 });
 

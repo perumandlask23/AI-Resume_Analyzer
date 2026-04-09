@@ -9,7 +9,20 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY);
 
 async function analyzeResume(resumeText, jobDescription) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ 
+    model: 'gemini-1.5-flash',
+    // Set safety settings to minimize false positives for professional documents
+    safetySettings: [
+      { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+      { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+      { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+      { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
+    ]
+  });
+
+  if (!resumeText || resumeText.trim().length < 10) {
+    throw new Error('Resume text is too short or empty. Please ensure the PDF is readable.');
+  }
 
   const prompt = `
 You are an expert HR recruiter and resume analyst. Analyze the following resume against the given job description and provide a detailed, accurate assessment.
@@ -40,6 +53,8 @@ Return your response as a valid JSON object with EXACTLY this structure (no extr
   let lastError = null;
   const maxRetries = 3;
   
+  console.log(`[ANALYZER] Starting analysis for resume (${resumeText.length} chars)`);
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const result = await model.generateContent(prompt);
@@ -50,11 +65,14 @@ Return your response as a valid JSON object with EXACTLY this structure (no extr
       const jsonEnd = text.lastIndexOf('}');
       
       if (jsonStart === -1 || jsonEnd === -1) {
+        console.warn(`[ANALYZER] Attempt ${attempt} failed: No JSON in AI response. Raw text: ${text.substring(0, 100)}...`);
         throw new Error('AI response did not contain a valid JSON object');
       }
       
       const jsonStr = text.substring(jsonStart, jsonEnd + 1);
       const analysis = JSON.parse(jsonStr);
+
+      console.log(`[ANALYZER] Successfully parsed AI response on attempt ${attempt}`);
 
       // Validate required fields and clamp scores
       return {
@@ -71,8 +89,13 @@ Return your response as a valid JSON object with EXACTLY this structure (no extr
       };
     } catch (error) {
       lastError = error;
-      console.warn(`Analysis attempt ${attempt} failed:`, error.message);
+      console.error(`[ANALYZER] Attempt ${attempt} error:`, error.message);
       
+      // Check for specific error types (like safety blocks)
+      if (error.message.includes('SAFETY')) {
+        console.error('[ANALYZER] Analysis blocked by safety filters. Model considers the content sensitive.');
+      }
+
       // Wait before retrying (exponential backoff: 1s, 2s)
       if (attempt < maxRetries) {
         const delay = Math.pow(2, attempt - 1) * 1000;
@@ -81,7 +104,7 @@ Return your response as a valid JSON object with EXACTLY this structure (no extr
     }
   }
 
-  throw new Error(`Failed to analyze resume after ${maxRetries} attempts: ${lastError.message}`);
+  throw new Error(`AI Analysis failed after ${maxRetries} attempts. Last error: ${lastError.message}`);
 }
 
 module.exports = { analyzeResume };
