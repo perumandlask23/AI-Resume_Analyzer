@@ -429,10 +429,23 @@ app.use((err, req, res, next) => {
 });
 
 // --- SERVER START ---
-console.log("🚀 Server starting...");
 process.on("uncaughtException", err => console.error("Uncaught Exception:", err));
 process.on("unhandledRejection", err => console.error("Unhandled Rejection:", err));
 
-app.listen(PORT, "0.0.0.0", () => {
+console.log(`🚀 Server starting on port ${PORT}...`);
+
+const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ ResumeAI Screener running at http://0.0.0.0:${PORT}`);
+});
+
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`❌ Port ${PORT} is already in use.`);
+    console.error(`   Run this to fix it: kill -9 $(lsof -ti :${PORT})`);
+    console.error(`   Then restart the server.`);
+    process.exit(1);
+  } else {
+    console.error("Server error:", err);
+    process.exit(1);
+  }
 });
