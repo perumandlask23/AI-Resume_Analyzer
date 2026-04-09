@@ -145,16 +145,20 @@ async function initDashboard() {
                             Posted ${new Date(job.createdAt).toLocaleDateString()}
                         </div>
                     </div>
-                    <div class="badge badge-blue" style="flex-shrink: 0;">${job.applicantCount} Candidates</div>
+                    <div class="badge badge-blue" style="flex-shrink: 0;">${job.applicantCount} Applicants</div>
                 </div>
                 
                 <div style="display: flex; gap: 12px; margin-top: auto;">
-                    <a href="/hr/jobs/${job.id}" class="btn btn-primary" style="flex: 2; height: 44px; font-size: 13px; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        Manage Pipeline
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    <a href="/hr/jobs/${job.id}" class="btn btn-primary" style="flex: 2; height: 44px; font-size: 13px; font-weight: 700; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
+                        <span style="display: flex; align-items: center; gap: 8px;">
+                            View Applicants
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </span>
+                        <span style="font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.7); margin-top: 2px;">Check who applied</span>
                     </a>
-                    <button class="btn btn-ghost delete-job" data-id="${job.id}" style="flex: 1; height: 44px; font-size: 13px; font-weight: 600; color: var(--accent-red-lt);">
-                        Archive
+                    <button class="btn btn-ghost delete-job" data-id="${job.id}" style="flex: 1; height: 44px; font-size: 13px; font-weight: 600; color: var(--accent-red-lt); display: flex; flex-direction: column; line-height: 1.2;">
+                        Close Job
+                        <span style="font-size: 9px; opacity: 0.6;">Hide posting</span>
                     </button>
                 </div>
             `;

@@ -31,7 +31,7 @@
         </a>
         <a href="/hr/candidates" class="mobile-nav-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span>Talent</span>
+            <span>Applicants</span>
         </a>
         <a href="/hr/analytics" class="mobile-nav-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
@@ -71,7 +71,7 @@
             </a>
             <a href="/hr/candidates" class="nav-item">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                Candidates
+                Applicants
             </a>
             <a href="/hr/analytics" class="nav-item">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
@@ -123,9 +123,9 @@
         <!-- Pipeline Visualization -->
         <div class="glass-card slide-up" style="margin-bottom: 48px; padding: 32px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                <h2 style="font-size: 20px; font-weight: 800; letter-spacing: -0.02em;">Recruitment Pipeline</h2>
+                <h2 style="font-size: 20px; font-weight: 800; letter-spacing: -0.02em;">Applicant Status</h2>
                 <div style="display: flex; gap: 12px;">
-                    <div class="badge badge-blue">{{applicantCount}} Candidates</div>
+                    <div class="badge badge-blue">{{applicantCount}} Applicants</div>
                     <div class="badge badge-green">{{analyzedCount}} Analyzed</div>
                 </div>
             </div>
@@ -169,16 +169,16 @@
 
         <div class="glass-card slide-up" style="overflow: hidden;">
             <div style="padding: 24px 32px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-size: 18px; font-weight: 800; letter-spacing: -0.02em;">Candidate Pipeline</h2>
+                <h2 style="font-size: 18px; font-weight: 800; letter-spacing: -0.02em;">Applicant Details</h2>
                 <div style="display: flex; gap: 12px;">
-                    <input type="text" class="form-input" style="width: 200px; height: 36px; font-size: 12px;" placeholder="Search candidates...">
+                    <input type="text" class="form-input" style="width: 200px; height: 36px; font-size: 12px;" placeholder="Search names...">
                 </div>
             </div>
             <div style="overflow-x: auto; padding: 0 16px;">
                 <table class="premium-table">
                     <thead>
                         <tr>
-                            <th>Candidate</th>
+                            <th>Applicant</th>
                             <th>Applied</th>
                             <th>Match Score</th>
                             <th>Overall Fit</th>
@@ -187,7 +187,7 @@
                         </tr>
                     </thead>
                     <tbody id="applicant-tbody">
-                        <tr><td colspan="6" style="text-align: center; padding: 60px;"><span class="shimmer" style="padding: 8px 16px; border-radius: 8px; color: var(--text-muted);">Fetching talent data...</span></td></tr>
+                        <tr><td colspan="6" style="text-align: center; padding: 60px;"><span class="shimmer" style="padding: 8px 16px; border-radius: 8px; color: var(--text-muted);">Fetching applicant data...</span></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -203,9 +203,9 @@
                  <div style="display: flex; align-items: center; gap: 32px; margin-bottom: 48px;">
                      <div class="user-avatar" id="modal-avatar" style="width: 80px; height: 80px; font-size: 32px; border-radius: 20px; background: var(--gradient-main); display: flex; align-items: center; justify-content: center; font-weight: 800;"></div>
                      <div>
-                         <h2 id="modal-name" style="font-size: 36px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px;">Candidate Name</h2>
+                         <h2 id="modal-name" style="font-size: 36px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px;">Applicant Name</h2>
                          <div style="display: flex; align-items: center; gap: 12px;">
-                            <span id="modal-role" class="badge badge-blue">Expert AI Researcher</span>
+                            <span id="modal-role" class="badge badge-blue">Job Role</span>
                             <span id="modal-email" style="font-size: 14px; color: var(--text-muted); font-weight: 500;"></span>
                          </div>
                      </div>
@@ -265,7 +265,7 @@
             tbody.innerHTML = '';
             
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 60px; color: var(--text-muted);">No candidates have applied yet.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 60px; color: var(--text-muted);">No applicants yet.</td></tr>';
                 return;
             }
 
@@ -337,13 +337,13 @@
             const analysis = app.analysis || {};
             
             if (!analysis.match_score) {
-                showToast('Candidate evaluation in progress.', 'info');
+                showToast('Applicant evaluation in progress.', 'info');
                 return;
             }
 
             document.getElementById('modal-name').textContent = app.name;
             document.getElementById('modal-email').textContent = app.email;
-            document.getElementById('modal-role').textContent = analysis.job_title_suggestion || 'Candidate';
+            document.getElementById('modal-role').textContent = analysis.job_title_suggestion || 'Applicant';
             document.getElementById('modal-avatar').textContent = app.name.split(' ').map(n=>n[0]).join('');
             
             const content = document.getElementById('modal-content');
@@ -451,10 +451,10 @@
         document.getElementById('analyze-all-btn').onclick = async () => {
             const btn = document.getElementById('analyze-all-btn');
             btn.disabled = true;
-            btn.innerHTML = '⏳ Analyzing Pipeline...';
+            btn.innerHTML = '⏳ Analyzing Applicants...';
             try {
                 await apiCall(`/api/jobs/${JOB_ID}/analyze-all`, { method: 'POST' });
-                showToast('All candidates analyzed!', 'success');
+                showToast('All applicants analyzed!', 'success');
                 loadApplicants();
             } catch(e) {
                 showToast('Batch analysis failed.', 'error');
