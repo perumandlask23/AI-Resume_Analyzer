@@ -154,20 +154,20 @@ async function initDashboard() {
                     <div class="badge badge-blue" style="flex-shrink: 0;">${job.applicantCount} Applicants</div>
                 </div>
                 
-                <div style="display: flex; gap: 16px; margin-top: auto;">
-                    <div style="flex: 1.5; display: flex; flex-direction: column; gap: 8px;">
-                        <a href="/hr/jobs/${job.id}" class="btn btn-primary" style="width: 100%; height: 44px; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            View Applicants
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <div style="display: flex; gap: 12px; margin-top: auto; width: 100%;">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0;">
+                        <a href="/hr/jobs/${job.id}" class="btn btn-primary" style="width: 100%; height: 44px; font-size: 13px; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap; overflow: hidden;">
+                            <span style="overflow: hidden; text-overflow: ellipsis;">View Applicants</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink: 0;"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </a>
-                        <span style="font-size: 10px; font-weight: 500; color: var(--text-muted); text-align: center;">Check who applied</span>
+                        <span style="font-size: 10px; font-weight: 500; color: var(--text-muted); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Check who applied</span>
                     </div>
                     
-                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-                        <button class="btn btn-ghost toggle-job-status" data-id="${job.id}" data-status="${job.status}" style="width: 100%; height: 44px; font-size: 13px; font-weight: 700; white-space: nowrap; color: ${isClosed ? 'var(--accent-green-lt)' : 'var(--accent-red-lt)'}; display: flex; align-items: center; justify-content: center;">
-                            ${isClosed ? 'Start Hiring' : 'Stop Hiring'}
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0;">
+                        <button class="btn btn-ghost toggle-job-status" data-id="${job.id}" data-status="${job.status}" style="width: 100%; height: 44px; font-size: 13px; font-weight: 700; color: ${isClosed ? 'var(--accent-green-lt)' : 'var(--accent-red-lt)'}; display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden;">
+                            <span style="overflow: hidden; text-overflow: ellipsis;">${isClosed ? 'Start Hiring' : 'Stop Hiring'}</span>
                         </button>
-                        <span style="font-size: 10px; font-weight: 500; color: var(--text-muted); text-align: center;">
+                        <span style="font-size: 10px; font-weight: 500; color: var(--text-muted); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             ${isClosed ? 'Applications active' : 'No new apps accepted'}
                         </span>
                     </div>
