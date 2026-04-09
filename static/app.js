@@ -154,18 +154,23 @@ async function initDashboard() {
                     <div class="badge badge-blue" style="flex-shrink: 0;">${job.applicantCount} Applicants</div>
                 </div>
                 
-                <div style="display: flex; gap: 12px; margin-top: auto;">
-                    <a href="/hr/jobs/${job.id}" class="btn btn-primary" style="flex: 1.5; min-width: 140px; height: 48px; font-size: 13px; font-weight: 700; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
-                        <span style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; gap: 16px; margin-top: auto;">
+                    <div style="flex: 1.5; display: flex; flex-direction: column; gap: 8px;">
+                        <a href="/hr/jobs/${job.id}" class="btn btn-primary" style="width: 100%; height: 44px; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 8px;">
                             View Applicants
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <span style="font-size: 10px; font-weight: 500; color: var(--text-muted); text-align: center;">Check who applied</span>
+                    </div>
+                    
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn btn-ghost toggle-job-status" data-id="${job.id}" data-status="${job.status}" style="width: 100%; height: 44px; font-size: 13px; font-weight: 700; white-space: nowrap; color: ${isClosed ? 'var(--accent-green-lt)' : 'var(--accent-red-lt)'}; display: flex; align-items: center; justify-content: center;">
+                            ${isClosed ? 'Start Hiring' : 'Stop Hiring'}
+                        </button>
+                        <span style="font-size: 10px; font-weight: 500; color: var(--text-muted); text-align: center;">
+                            ${isClosed ? 'Applications active' : 'No new apps accepted'}
                         </span>
-                        <span style="font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.7); margin-top: 2px;">Check who applied</span>
-                    </a>
-                    <button class="btn btn-ghost toggle-job-status" data-id="${job.id}" data-status="${job.status}" style="flex: 1; min-width: 100px; height: 48px; font-size: 13px; font-weight: 600; color: ${isClosed ? 'var(--accent-green-lt)' : 'var(--accent-red-lt)'}; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;">
-                        ${isClosed ? 'Reopen Job' : 'Close Job'}
-                        <span style="font-size: 9px; opacity: 0.6;">${isClosed ? 'Active link' : 'Hide posting'}</span>
-                    </button>
+                    </div>
                 </div>
             `;
             jobList.appendChild(card);
