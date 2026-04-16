@@ -11,9 +11,9 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  # ── Job 1: Lint & Test ────────────────────────────────────────
-  test:
-    name: Lint & Test
+  # ── Backend CI ────────────────────────────────────────────────
+  backend-ci:
+    name: Backend CI
     runs-on: ubuntu-latest
 
     services:
@@ -40,17 +40,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Debug Environment
-        run: |
-          echo "📂 Project Structure:"
-          ls -R
-          echo "🟢 Node Version:"
-          node -v
-          echo "📦 NPM Version:"
-          npm -v
-          echo "🛡️ Check Environment Variables (names only):"
-          env | grep -E 'NODE_ENV|PORT|MONGODB_URI' || true
-
       - name: Check for syntax errors
         run: node --check server.js
 
@@ -75,15 +64,29 @@ jobs:
             sleep 3
           done
 
-          echo "❌ Server failed to respond in time. Last 20 lines of logs:"
-          tail -n 20 server.log
+          echo "❌ Server failed to respond in time."
           exit 1
+
+  # ── Frontend CI ───────────────────────────────────────────────
+  frontend-ci:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check templates and static files
+        run: |
+          echo "📂 Checking structure..."
+          ls -d templates static
+          echo "✅ Frontend assets present"
 
   # ── Job 2: Build & Push Docker Image ─────────────────────────
   build:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
-    needs: test
+    needs: [backend-ci, frontend-ci]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     
     permissions:
