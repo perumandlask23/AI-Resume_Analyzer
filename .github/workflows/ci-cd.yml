@@ -40,6 +40,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Debug Environment
+        run: |
+          echo "📂 Project Structure:"
+          ls -R
+          echo "🟢 Node Version:"
+          node -v
+          echo "📦 NPM Version:"
+          npm -v
+          echo "🛡️ Check Environment Variables (names only):"
+          env | grep -E 'NODE_ENV|PORT|MONGODB_URI' || true
+
       - name: Check for syntax errors
         run: node --check server.js
 
@@ -51,11 +62,22 @@ jobs:
           PORT: 8001
           NODE_ENV: test
         run: |
-          timeout 15 node server.js &
-          sleep 5
-          curl -f http://localhost:8001/hr/login || exit 1
-          echo "✅ Server started successfully"
-          kill %1
+          echo "🚀 Starting server test on port 8001..."
+          timeout 15 node server.js > server.log 2>&1 &
+          
+          echo "⏳ Waiting for server to stabilize..."
+          for i in {1..5}; do
+            if curl -s http://localhost:8001/hr/login > /dev/null; then
+              echo "✅ Server is up and responding!"
+              exit 0
+            fi
+            echo "Waiting... ($i/5)"
+            sleep 3
+          done
+
+          echo "❌ Server failed to respond in time. Last 20 lines of logs:"
+          tail -n 20 server.log
+          exit 1
 
   # ── Job 2: Build & Push Docker Image ─────────────────────────
   build:
@@ -110,16 +132,7 @@ jobs:
     environment: production
 
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /opt/resumeai
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker compose pull app
-            docker compose up -d --no-deps app
-            docker image prune -f
-            echo "✅ Deployed successfully at $(date)"
+      - name: Trigger Render Deploy
+        if: success()
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
