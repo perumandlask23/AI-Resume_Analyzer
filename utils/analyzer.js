@@ -9,16 +9,19 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY);
 
 async function analyzeResume(resumeText, jobDescription) {
-  const model = genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash',
-    // Set safety settings to minimize false positives for professional documents
-    safetySettings: [
-      { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
-    ]
-  });
+  const model = genAI.getGenerativeModel(
+    { 
+      model: 'gemini-1.5-flash-latest',
+      // Set safety settings to minimize false positives for professional documents
+      safetySettings: [
+        { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+        { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
+      ]
+    },
+    { apiVersion: 'v1' }
+  );
 
   if (!resumeText || resumeText.trim().length < 10) {
     throw new Error('Resume text is too short or empty. Please ensure the PDF is readable.');
@@ -90,6 +93,11 @@ Return your response as a valid JSON object with EXACTLY this structure (no extr
     } catch (error) {
       lastError = error;
       console.error(`[ANALYZER] Attempt ${attempt} error:`, error.message);
+      
+      // Handle specific API key errors
+      if (error.message.includes('API key was reported as leaked') || error.message.includes('PERMISSION_DENIED')) {
+        throw new Error('CRITICAL: Your Gemini API key has been revoked/leaked. Please update your .env with a new key from Google AI Studio.');
+      }
       
       // Check for specific error types (like safety blocks)
       if (error.message.includes('SAFETY')) {
